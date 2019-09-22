@@ -8,7 +8,8 @@ Page({
     // https://images.unsplash.com/photo-1560042289-7951ad5bfcf5?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=750&h=1334&fit=crop&ixid=eyJhcHBfaWQiOjF9
     image: '/assets/placeholder.jpg',
     showTips: false,
-    result: null
+    result: null,
+    sign: null
   },
 
   /**
@@ -23,9 +24,11 @@ Page({
     // loading
     wx.showLoading({ title: '分析中...' })
 
+    //wx.getReqSign(null,'SFFaDRax3Q8MxNLc')
+
     // 将图片上传至 AI 服务端点
     wx.uploadFile({
-      url: 'https://ai.qq.com/cgi-bin/appdemo_detectface',
+      url: 'https://api.ai.qq.com/fcgi-bin/ptu/ptu_faceage',
       name: 'image_file',
       filePath: src,
       success (res) {
@@ -110,5 +113,17 @@ Page({
     if (!this.data.result) return
     // 如果有分析结果，则分享
     return { title: `刚刚测了我的颜值「${this.data.result.beauty}」你也赶紧来试试吧！` }
+  },
+
+  getReqSign(params, appkey) {
+    // 1. 字典升序排序
+
+    // 2. 拼按URL键值对
+    
+
+    // 3. 拼接app_key
+
+    // 4. MD5运算+转换大写，得到请求签名
   }
+  
 })

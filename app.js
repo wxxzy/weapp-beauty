@@ -4,8 +4,8 @@ App({
   //  */
   // config: {
   //   apiUrl: 'https://api.ai.qq.com/fcgi-bin/face/face_detectface',
-  //   apiAppId: '<your app id>',
-  //   apiAppSecret: '<your app secret>'
+  //   apiAppId: '2122110749',
+  //   apiAppSecret: 'SFFaDRax3Q8MxNLc'
   // },
 
   // /**
