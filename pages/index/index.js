@@ -22,19 +22,23 @@ Page({
 
     // loading
     wx.showLoading({ title: '分析中...' })
-    console.log(that.data.imgbase64)
     var params = {};
+    params.appid = 2122110749;
+    params.time_stamp = (new Date()).valueOf();;
+    params.nonce_str = Math.random().toString(36).substr(2);
+    params.sign = ''
     params.image = imgbase64
-    this.getReqSign(params,'SFFaDRax3Q8MxNLc')
-
+    let sign = this.getReqSign(params,'SFFaDRax3Q8MxNLc')
+    params.sign = sign
     // 将图片上传至 AI 服务端点
     wx.request({
       url: 'https://api.ai.qq.com/fcgi-bin/ptu/ptu_faceage',
-      data: 'object',
+      data: params,
       method: "POST",
       success (res) {
         // 解析 JSON
-        const result = JSON.parse(res.data)
+        console.log(res)
+        const result = res.data
 
         if (result.ret === 0) {
           // 成功获取分析结果
@@ -73,18 +77,21 @@ Page({
         // 显示到界面上
         that.setData({ image: image.path })
 
-        wx.request({
-          url: res.tempFilePaths[0],
-          responseType: 'arraybuffer', //最关键的参数，设置返回的数据格式为arraybuffer
-          success: res => {
-            //把arraybuffer转成base64
-            let base64 = wx.arrayBufferToBase64(res.data);
-            //不加上这串字符，在页面无法显示的哦
-            base64 　= 'data:image/jpeg;base64,' + base64
-            // 分析检测人脸
-            that.detectImage(base64)
-          }
-        })
+        let base64 = wx.getFileSystemManager().readFileSync(res.tempFilePaths[0], "base64")
+
+        that.detectImage('data:image/jpeg;base64,' + base64)
+        // wx.request({
+        //   url: res.tempFilePaths[0],
+        //   responseType: 'arraybuffer', //最关键的参数，设置返回的数据格式为arraybuffer
+        //   success: res => {
+        //     //把arraybuffer转成base64
+        //     let base64 = wx.arrayBufferToBase64(res.data);
+        //     //不加上这串字符，在页面无法显示的哦
+        //     base64 　= 'data:image/jpeg;base64,' + base64
+        //     // 分析检测人脸
+        //     that.detectImage(base64)
+        //   }
+        // })
       }
     })
 
@@ -136,18 +143,36 @@ Page({
         sign		接口请求签名，待计算
      */
     // 1. 字典升序排序
-    params.appid = 2122110749;
-    params.time_stamp = (new Date()).valueOf();;
-    params.nonce_str = Math.random().toString(36).substr(2);
     let paramsJson = JSON.stringify(params)
-    console.log(paramsJson)
+    let sortParams = JSON.parse(paramsJson)
+    console.log(sortParams)
 
     // 2. 拼按URL键值对
+    var str = this.jsonSort(sortParams)
     
-
     // 3. 拼接app_key
-
+    str = str + 'app_key=' + appkey
+    //console.log(str)
     // 4. MD5运算+转换大写，得到请求签名
+    var md5 = require('../../md5-1.js')
+    let md5str = md5.hex_md5(str).toUpperCase()
+    console.log(md5str)
+    return md5str
+  },
+
+  jsonSort: function (jsonObj) {
+    let arr = [];
+    for (var key in jsonObj) {
+      arr.push(key)
+    }
+    arr.sort();
+    let str = '';
+    for (var i in arr) {
+      if (jsonObj[arr[i]]!=''){
+        str += arr[i] + "=" + jsonObj[arr[i]] + "&"
+      }
+    }
+    return str.substr(0, str.length - 1)
   }
 
 
