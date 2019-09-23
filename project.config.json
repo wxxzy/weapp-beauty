@@ -24,7 +24,7 @@
 		}
 	},
 	"compileType": "miniprogram",
-	"libVersion": "2.7.1",
+	"libVersion": "2.8.3",
 	"appid": "wx3039e3408e26585e",
 	"projectname": "beauty",
 	"cloudfunctionTemplateRoot": "",

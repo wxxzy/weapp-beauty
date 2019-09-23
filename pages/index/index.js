@@ -5,7 +5,6 @@ Page({
    * 页面的初始数据
    */
   data: {
-    // https://images.unsplash.com/photo-1560042289-7951ad5bfcf5?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=750&h=1334&fit=crop&ixid=eyJhcHBfaWQiOjF9
     image: '/assets/placeholder.jpg',
     showTips: false,
     result: null,
@@ -15,7 +14,7 @@ Page({
   /**
    * 分析照片
    */
-  detectImage (src) {
+  detectImage(imgbase64) {
     const that = this
 
     // 取消之前的结果显示
@@ -23,14 +22,16 @@ Page({
 
     // loading
     wx.showLoading({ title: '分析中...' })
-
-    //wx.getReqSign(null,'SFFaDRax3Q8MxNLc')
+    console.log(that.data.imgbase64)
+    var params = {};
+    params.image = imgbase64
+    this.getReqSign(params,'SFFaDRax3Q8MxNLc')
 
     // 将图片上传至 AI 服务端点
-    wx.uploadFile({
+    wx.request({
       url: 'https://api.ai.qq.com/fcgi-bin/ptu/ptu_faceage',
-      name: 'image_file',
-      filePath: src,
+      data: 'object',
+      method: "POST",
       success (res) {
         // 解析 JSON
         const result = JSON.parse(res.data)
@@ -72,8 +73,18 @@ Page({
         // 显示到界面上
         that.setData({ image: image.path })
 
-        // 分析检测人脸
-        that.detectImage(image.path)
+        wx.request({
+          url: res.tempFilePaths[0],
+          responseType: 'arraybuffer', //最关键的参数，设置返回的数据格式为arraybuffer
+          success: res => {
+            //把arraybuffer转成base64
+            let base64 = wx.arrayBufferToBase64(res.data);
+            //不加上这串字符，在页面无法显示的哦
+            base64 　= 'data:image/jpeg;base64,' + base64
+            // 分析检测人脸
+            that.detectImage(base64)
+          }
+        })
       }
     })
 
@@ -116,7 +127,20 @@ Page({
   },
 
   getReqSign(params, appkey) {
+    /**
+     *  app_id	10000	应用标识
+        time_stamp	1493449657	秒级时间戳
+        nonce_str	20e3408a79	随机字符串
+        key1	腾讯AI开放平台	接口请求数据，本示例为UTF-8编码
+        key2	示例仅供参考	接口请求数据，本示例为UTF-8编码
+        sign		接口请求签名，待计算
+     */
     // 1. 字典升序排序
+    params.appid = 2122110749;
+    params.time_stamp = (new Date()).valueOf();;
+    params.nonce_str = Math.random().toString(36).substr(2);
+    let paramsJson = JSON.stringify(params)
+    console.log(paramsJson)
 
     // 2. 拼按URL键值对
     
@@ -125,5 +149,8 @@ Page({
 
     // 4. MD5运算+转换大写，得到请求签名
   }
-  
+
+
 })
+
+
