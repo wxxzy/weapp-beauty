@@ -1,5 +1,5 @@
 // const { apiUrl, apiAppId, apiAppSecret } = getApp().config
-
+const utils = require('../../utils/utils')
 Page({
   /**
    * 页面的初始数据
@@ -24,11 +24,12 @@ Page({
     wx.showLoading({ title: '分析中...' })
     var params = {};
     params.appid = 2122110749;
-    params.time_stamp = (new Date()).valueOf();;
+    params.time_stamp = (Date.now() / 1000).toFixed();
     params.nonce_str = Math.random().toString(36).substr(2);
     params.sign = ''
     params.image = imgbase64
-    let sign = this.getReqSign(params,'SFFaDRax3Q8MxNLc')
+    //let sign = this.getReqSign(params,'SFFaDRax3Q8MxNLc')
+    let sign = utils.signedParam(params)
     params.sign = sign
     // 将图片上传至 AI 服务端点
     wx.request({
