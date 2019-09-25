@@ -4,7 +4,7 @@
 
 ## Usage
 
-没有腾讯人脸检测与分析API
+使用腾讯人脸检测与分析API
 
 ## Preview
 
