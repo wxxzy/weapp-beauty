@@ -21,8 +21,10 @@ let formatResults = (res) => {
 
 let signedParam = (param) => {
   const md5 = require('./md5')
-  param.app_id = 2111312439
-  let app_key = 'w2NDul0yGsGkf34G'
+  //param.app_id = 2111312439
+  //let app_key = 'w2NDul0yGsGkf34G'
+  param.app_id = 2122110749
+  let app_key = 'SFFaDRax3Q8MxNLc'
   // 签名
   let querystring =
     Object.keys(param)
